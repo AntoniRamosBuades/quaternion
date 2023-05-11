@@ -161,6 +161,11 @@ def squad(R_in, t_in, t_out, unflip_input_rotors=False):
     B = roll(R_in, -1) * np.exp((np.log((~roll(R_in, -1)) * roll(R_in, -2))
                                     * np.reshape((roll(t_in, -1) - t_in) / (roll(t_in, -2) - roll(t_in, -1)), t_in_broadcast_shape)
                                     - np.log((~R_in) * roll(R_in, -1))) * -0.25)
+    
+    if np.any(np.isnan(A)) or np.any(np.isnan(B)) or np.any(np.isinf(A))  or np.any(np.isinf(B)):
+        nan_A = np.where(np.isnan(A))[0]
+        nan_B = np.where(np.isnan(B))[0]
+        raise ValueError(f"Problem in squad. idxs nan_A = {nan_A},  idxs nan_B = {nan_B}")
 
     # Correct the first and last A time steps, and last two B time steps.  We extend R_in with the following wrap-around
     # values:
